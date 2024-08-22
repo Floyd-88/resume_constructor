@@ -1,69 +1,55 @@
 <template>
-    <div v-if="true">
-      <button
-        class="bg-green-700 py-2 px-3 shadow-xl border-1 rounded-2xl text-sm text-white font-bold hover:bg-green-600 active:bg-green-400"
-      >
-        ЗАГРУЗИТЬ КОММЕНТАРИИ
-      </button>
+  <div v-if="!reviews">
+    <UniversalButton
+      @click="loadReviews"
+      color="bg-green-700 hover:bg-green-600 active:bg-green-400"
+      >ЗАГРУЗИТЬ КОММЕНТАРИИ</UniversalButton
+    >
+  </div>
+
+  <div v-else class="w-full bg-white rounded-lg p-3">
+    <h2 class="text-xl font-medium mb-1">Комментарии</h2>
+    <hr />
+
+    <div class="mt-6">
+      <ul>
+        <li class="mb-4" v-for="review in reviews" :key="review.id">
+          <p class="font-semibold mb-2">{{ review.email }}</p>
+          <p>
+            {{ review.body }}
+          </p>
+        </li>
+      </ul>
     </div>
-    <div v-else class="w-full bg-white rounded-lg p-3">
-      <h2 class="text-xl font-medium mb-1">Комментарии</h2>
-      <hr />
-
-      <div class="mt-6">
-        <ul>
-          <li class="mb-4">
-            <p class="font-semibold mb-2">iii@gamail.com</p>
-            <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat sunt quis dolores
-              minima, vel nesciunt similique explicabo dolor? Odit, nobis?
-            </p>
-          </li>
-
-          <li class="mb-4">
-            <p class="font-semibold mb-2">iii@gamail.com</p>
-            <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat sunt quis dolores
-              minima, vel nesciunt similique explicabo dolor? Odit, nobis?
-            </p>
-          </li>
-
-          <li class="mb-4">
-            <p class="font-semibold mb-2">iii@gamail.com</p>
-            <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat sunt quis dolores
-              minima, vel nesciunt similique explicabo dolor? Odit, nobis?
-            </p>
-          </li>
-
-          <li class="mb-4">
-            <p class="font-semibold mb-2">iii@gamail.com</p>
-            <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat sunt quis dolores
-              minima, vel nesciunt similique explicabo dolor? Odit, nobis?
-            </p>
-          </li>
-
-          <li class="mb-4">
-            <p class="font-semibold mb-2">iii@gamail.com</p>
-            <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat sunt quis dolores
-              minima, vel nesciunt similique explicabo dolor? Odit, nobis?
-            </p>
-          </li>
-
-          <li class="mb-4">
-            <p class="font-semibold mb-2">iii@gamail.com</p>
-            <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat sunt quis dolores
-              minima, vel nesciunt similique explicabo dolor? Odit, nobis?
-            </p>
-          </li>
-        </ul>
-      </div>
-    </div>
+  </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+import UniversalButton from './universalComponent/UniversalButton.vue'
+import type { ReviewsI } from '@/types/types'
+const reviews = ref<ReviewsI[]>()
+
+async function loadReviews() {
+  try {
+    const res = await fetch('https://jsonplaceholder.typicode.com/comments?_limit=10', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (res.ok) {
+      const data = await res.json()
+      reviews.value = data
+    } else {
+      throw new Error(`Ошибка: ${res.statusText}`)
+    }
+  } catch (err) {
+    console.log(err)
+    return []
+  }
+}
+</script>
 
 <style scoped></style>

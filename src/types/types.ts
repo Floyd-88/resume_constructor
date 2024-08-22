@@ -10,3 +10,11 @@ export interface HtmlElementI {
   id: string;
   content: HtmlContent;
 }
+
+export interface ReviewsI {
+  postId: number;
+  id: number;
+  name: string;
+  email: string;
+  body: string;
+}
