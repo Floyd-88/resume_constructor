@@ -22,16 +22,20 @@
       </ul>
     </div>
   </div>
+  <UniversalLoader v-if="isLoader"/>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import UniversalButton from './universalComponent/UniversalButton.vue'
 import type { ReviewsI } from '@/types/types'
+import UniversalLoader from './universalComponent/UniversalLoader.vue';
 const reviews = ref<ReviewsI[]>()
+const isLoader = ref<boolean>(false)
 
 async function loadReviews() {
   try {
+    isLoader.value = true
     const res = await fetch('https://jsonplaceholder.typicode.com/comments?_limit=10', {
       method: 'GET',
       headers: {
@@ -48,6 +52,8 @@ async function loadReviews() {
   } catch (err) {
     console.log(err)
     return []
+  } finally {
+    isLoader.value = false
   }
 }
 </script>
